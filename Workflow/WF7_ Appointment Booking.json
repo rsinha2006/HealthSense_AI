@@ -1,0 +1,363 @@
+{
+  "name": "WF7: Appointment Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "book-appointment",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7e45c45b-6cf7-4cd6-9e03-d664ffbea697",
+      "name": "Booking Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        96
+      ],
+      "webhookId": "3546bdcd-71ab-4191-b315-19b5b6de63a5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "name",
+              "leftValue": "={{ ($json.body.patientName && $json.body.patientName.length) ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "email",
+              "leftValue": "={{ ($json.body.email && $json.body.email.length) ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "doctor",
+              "leftValue": "={{ ($json.body.doctor && $json.body.doctor.length) ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "date",
+              "leftValue": "={{ ($json.body.date && $json.body.date.length) ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "time",
+              "leftValue": "={{ ($json.body.time && $json.body.time.length) ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "13bdc715-f778-4630-a80f-82d5757c5ba5",
+      "name": "Valid Booking?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst body = ($input.first().json && $input.first().json.body) || {};\n\nconst rand = Math.random().toString(36).slice(2, 8).toUpperCase();\nconst appointmentId = 'APT-' + Date.now().toString(36).toUpperCase() + '-' + rand;\nconst createdAt = new Date().toISOString();\n\nreturn [{\n  json: {\n    appointmentId: appointmentId,\n    patientName: body.patientName || '',\n    email: body.email || '',\n    phone: body.phone || '',\n    doctor: body.doctor || '',\n    date: body.date || '',\n    time: body.time || '',\n    status: 'confirmed',\n    createdAt: createdAt\n  }\n}];\n"
+      },
+      "id": "2d2011b9-a0d3-4b0b-b64e-44235a61418d",
+      "name": "Generate Appointment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "b9JVsfrqpog8UI3i",
+          "cachedResultName": "appointments"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "appointment_id": "={{ $json.appointmentId }}",
+            "patient_name": "={{ $json.patientName }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}",
+            "doctor": "={{ $json.doctor }}",
+            "appt_date": "={{ $json.date }}",
+            "appt_time": "={{ $json.time }}",
+            "status": "={{ $json.status }}",
+            "created_at": "={{ $json.createdAt }}"
+          },
+          "schema": [
+            {
+              "id": "appointment_id",
+              "displayName": "appointment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "patient_name",
+              "displayName": "patient_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doctor",
+              "displayName": "doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appt_date",
+              "displayName": "appt_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appt_time",
+              "displayName": "appt_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4f055f53-0dae-4a02-9adf-2efa2e4827fb",
+      "name": "Save Appointment",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $(\"Generate Appointment\").item.json.email }}",
+        "subject": "=Appointment Confirmed - {{ $(\"Generate Appointment\").item.json.appointmentId }}",
+        "message": "=<h2>Appointment Confirmed</h2><p>Dear {{ $(\"Generate Appointment\").item.json.patientName }},</p><p>Your appointment has been confirmed.</p><ul><li><b>Appointment ID:</b> {{ $(\"Generate Appointment\").item.json.appointmentId }}</li><li><b>Doctor:</b> {{ $(\"Generate Appointment\").item.json.doctor }}</li><li><b>Date:</b> {{ $(\"Generate Appointment\").item.json.date }}</li><li><b>Time:</b> {{ $(\"Generate Appointment\").item.json.time }}</li></ul><p>Please arrive 10 minutes early. This is an automated confirmation from the AI Health platform.</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e7d74b66-6a87-4f42-9eb0-e7358a57259a",
+      "name": "Send Confirmation",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        0
+      ],
+      "webhookId": "fd31439e-bcff-4661-9550-71ebcb19de1c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tYC3lk7v58i3mUep",
+          "name": "Gmail OAuth2 API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"appointmentId\":\"{{ $(\"Generate Appointment\").item.json.appointmentId }}\",\"status\":\"confirmed\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "489d9527-a315-4e10-8709-10b9c94b668e",
+      "name": "Respond Confirmed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"missing required fields\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "e3e18f9e-b8a7-4186-9221-6c48de4cb190",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        192
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Booking Webhook": {
+      "main": [
+        [
+          {
+            "node": "Valid Booking?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Booking?": {
+      "main": [
+        [
+          {
+            "node": "Generate Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Appointment": {
+      "main": [
+        [
+          {
+            "node": "Save Appointment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Appointment": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Respond Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c8a59fac-7b06-446b-99aa-a4d3b8c53cfe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "defb3b682ac92026c84819ec5da6592996de9cbe5ecdaeb99e83e8aefa9e4e96"
+  },
+  "nodeGroups": [],
+  "id": "Tnnv2wfp8NODkvoE",
+  "tags": []
+}
