@@ -1,0 +1,214 @@
+{
+  "name": "WF1 - Disease Image Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "WF1 — Disease Image Analysis\n\nPOST /image-analysis (multipart/form-data, image in field \"data\", optional \"description\"/\"symptoms\").\nGemini Vision analyzes the image; the Code node re-derives riskLevel deterministically from riskScore (0-40 Low, 41-70 Medium, 71-100 High) and sets emergency=true when High.\n\nSetup: connect a Google Gemini (googlePalmApi) credential.",
+        "height": 200,
+        "width": 300
+      },
+      "id": "2e216477-4ce6-482f-9a35-4b6bb673e538",
+      "name": "Sticky Note a99579d9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "image-analysis",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "dde87820-24bf-4c73-927d-2f9b42754859",
+      "name": "Image Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        96
+      ],
+      "webhookId": "6c71aa5a-3e7e-466d-b03b-4d13b40681e1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-binary",
+              "leftValue": "={{ $binary && $binary.data ? true : false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ab7d2a0d-60db-45f1-ab52-9e0fdf9849c0",
+      "name": "Has Image?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-flash-latest",
+          "cachedResultName": "gemini-flash-latest"
+        },
+        "text": "=You are an AI healthcare image screening assistant.\n\nAnalyze the uploaded medical image and any accompanying description.\n\nTasks:\n1. Identify possible visible medical conditions.\n2. Estimate confidence percentage (0-100).\n3. Calculate a risk score (0-100).\n4. Classify the risk level:\n   - Low (0-40)\n   - Medium (41-70)\n   - High (71-100)\n5. Recommend the most appropriate medical specialist.\n6. Provide 3-5 practical recommendations.\n7. Detect if urgent medical attention may be required.\n\nImportant Rules:\n- Do NOT claim a confirmed diagnosis.\n- State only possible conditions based on visible evidence.\n- If image quality is poor, mention that confidence is limited.\n- Return ONLY valid JSON.\n- Do not include markdown, explanations, or code blocks.\n\nReturn format:\n\n{\n  \"condition\": \"\",\n  \"confidence\": 0,\n  \"riskScore\": 0,\n  \"riskLevel\": \"\",\n  \"specialist\": \"\",\n  \"recommendations\": [\n    \"\",\n    \"\",\n    \"\"\n  ],\n  \"emergency\": false,\n  \"summary\": \"\"\n}",
+        "inputType": "binary",
+        "options": {
+          "maxOutputTokens": 1024
+        }
+      },
+      "id": "639a4e6c-a919-4980-930c-06b4979dcfca",
+      "name": "Gemini Vision Analyze",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "aT16nGxis4LUpuZU",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Gemini output and compute deterministic risk level\nconst item = $input.first().json;\nlet raw = item.content ?? item.text ?? item.response ?? item.message ?? '';\nif (typeof raw === 'object' && raw !== null) {\n  raw = JSON.stringify(raw);\n}\n\nfunction bandFromScore(score) {\n  if (score <= 40) return 'Low';\n  if (score <= 70) return 'Medium';\n  return 'High';\n}\n\nlet parsed = null;\nif (typeof raw === 'string' && raw.trim().length) {\n  let cleaned = raw.trim();\n  // strip markdown code fences if present\n  cleaned = cleaned.replace(/^\\`\\`\\`(json)?/i, '').replace(/\\`\\`\\`$/,'').trim();\n  const start = cleaned.indexOf('{');\n  const end = cleaned.lastIndexOf('}');\n  if (start !== -1 && end !== -1 && end > start) {\n    cleaned = cleaned.slice(start, end + 1);\n  }\n  try {\n    parsed = JSON.parse(cleaned);\n  } catch (e) {\n    parsed = null;\n  }\n}\n\nif (!parsed || typeof parsed !== 'object') {\n  return [{\n    json: {\n      error: 'could not parse AI response',\n      message: 'The AI did not return valid JSON. Professional medical consultation is required.',\n      raw: typeof raw === 'string' ? raw : JSON.stringify(raw),\n      riskLevel: 'Unknown',\n      emergency: false,\n    },\n  }];\n}\n\nlet riskScore = Number(parsed.riskScore);\nif (!isFinite(riskScore)) riskScore = 0;\nriskScore = Math.max(0, Math.min(100, Math.round(riskScore)));\n\nlet confidence = Number(parsed.confidence);\nif (!isFinite(confidence)) confidence = 0;\nconfidence = Math.max(0, Math.min(100, Math.round(confidence)));\n\nconst riskLevel = bandFromScore(riskScore);\nconst emergency = riskLevel === 'High';\n\nconst recommendations = Array.isArray(parsed.recommendations) ? parsed.recommendations : [];\nif (!recommendations.some(r => String(r).toLowerCase().includes('professional'))) {\n  recommendations.push('This is an AI screening aid, not a diagnosis. Professional medical consultation is required.');\n}\n\nreturn [{\n  json: {\n    possibleDisease: parsed.possibleDisease ?? parsed.disease ?? 'Unknown',\n    confidence,\n    riskScore,\n    riskLevel,\n    specialist: parsed.specialist ?? 'General Physician',\n    symptoms: Array.isArray(parsed.symptoms) ? parsed.symptoms : [],\n    recommendations,\n    emergency,\n    disclaimer: 'This is an AI-based screening aid and not a confirmed medical diagnosis. Please consult a licensed doctor.',\n  },\n}];"
+      },
+      "id": "64f52672-58ad-44ea-a050-01a3898232b0",
+      "name": "Parse & Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c7f3bbc4-b1d1-44d6-baff-c4b0a67d97ba",
+      "name": "Respond Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: \"no image provided\", message: \"Please upload a disease image as multipart/form-data field \\\"data\\\".\", riskLevel: \"Unknown\", emergency: false }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "62b290e4-bb40-4db3-8758-cd43d770e0a4",
+      "name": "Respond No Image",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        192
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Image Webhook": {
+      "main": [
+        [
+          {
+            "node": "Has Image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Image?": {
+      "main": [
+        [
+          {
+            "node": "Gemini Vision Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond No Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Vision Analyze": {
+      "main": [
+        [
+          {
+            "node": "Parse & Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Score": {
+      "main": [
+        [
+          {
+            "node": "Respond Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2e47b120-8ddc-48d9-bd66-50c3d4f6e7e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "defb3b682ac92026c84819ec5da6592996de9cbe5ecdaeb99e83e8aefa9e4e96"
+  },
+  "nodeGroups": [],
+  "id": "qZZF0jNTRgFJKHu2",
+  "tags": []
+}
