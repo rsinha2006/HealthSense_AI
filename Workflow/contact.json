@@ -1,0 +1,162 @@
+{
+  "name": "Contact",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "contact",
+        "options": {}
+      },
+      "id": "442efd2e-2226-4748-bbd7-0240bc2b8750",
+      "name": "Contact Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "d1af32a2-54d5-4a97-a499-599cb1045362"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ue_kamLPeapqAhgNd8nf6yCeUMWXtQpD9VG0f9PI4mo",
+          "mode": "list",
+          "cachedResultName": "give in table form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ue_kamLPeapqAhgNd8nf6yCeUMWXtQpD9VG0f9PI4mo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1062304057,
+          "mode": "list",
+          "cachedResultName": "give in table form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ue_kamLPeapqAhgNd8nf6yCeUMWXtQpD9VG0f9PI4mo/edit#gid=1062304057"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.body.email }}",
+            "Name": "={{ $json.body.name }}",
+            "Inquiry": "={{ $json.body.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Inquiry",
+              "displayName": "Inquiry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "bebedfd9-fb4b-4686-b188-2c99593aebdd",
+      "name": "Save to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "avMqoVm6pcU6oHMO",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "chirag98728@gmail.com",
+        "subject": "=New Contact Enquiry from {{ $(\"Contact Webhook\").item.json.body.name }}",
+        "message": "=<h2>New Contact Enquiry</h2><ul><li><b>Name:</b> {{ $(\"Contact Webhook\").item.json.body.name }}</li><li><b>Email:</b> {{ $(\"Contact Webhook\").item.json.body.email }}</li></ul><p><b>Enquiry:</b></p><p>{{ $(\"Contact Webhook\").item.json.body.message }}</p>",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "={{ $(\"Contact Webhook\").item.json.body.email }}"
+        }
+      },
+      "id": "18507f15-2b81-48a2-894c-363845640059",
+      "name": "Notify Team",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "webhookId": "31ae3b5e-69b0-433a-8b69-254932ca74a5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "tYC3lk7v58i3mUep",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Contact Webhook": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Notify Team",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "74a1927d-5092-44f9-b1ff-1f9ad86666a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "defb3b682ac92026c84819ec5da6592996de9cbe5ecdaeb99e83e8aefa9e4e96"
+  },
+  "nodeGroups": [],
+  "id": "cf8Byzjnsy7K5cuL",
+  "tags": []
+}
