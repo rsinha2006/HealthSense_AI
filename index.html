@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSense AI & Smart Doctor Recommendation System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>AI Engine analyzing medical telemetry...</p>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <i class="fa-solid fa-heart-pulse icon-pulse"></i>
+            <span>AI <span class="accent-text">Health</span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link active" onclick="switchView('home')">Home</a></li>
+            <li><a href="#scanner" class="nav-link" onclick="switchView('scanner')">Disease Scanner</a></li>
+            <li><a href="#analyzer" class="nav-link" onclick="switchView('analyzer')">Report Analyzer</a></li>
+            <li><a href="#symptoms" class="nav-link" onclick="switchView('symptoms')">Symptom Checker</a></li>
+            <li><a href="#doctors" class="nav-link" onclick="switchView('doctors')">Doctors</a></li>
+            <li><a href="#appointments" class="nav-link" onclick="switchView('appointments')">Appointments</a></li>
+            <li><a href="#dashboard" class="nav-link" onclick="switchView('dashboard')">Dashboard</a></li>
+            <li><a href="#contact" class="nav-link" onclick="switchView('contact')">Contact</a></li>
+        </ul>
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Dark Mode">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="menu-toggle" aria-label="Open Menu" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+    <main class="container">
+
+        <section id="home-view" class="view-active fade-in">
+            <div class="hero">
+                <h1>HealthSense AI & <br><span class="gradient-text">Smart Doctor Recommendation System</span></h1>
+                <p class="subtitle">Empowering smarter healthcare with AI-driven symptom analysis, medical report interpretation, disease image detection, and personalized specialist recommendations.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" onclick="switchView('scanner')"><i class="fa-solid fa-microscope"></i> Analyze Health</button>
+                    <button class="btn btn-secondary" onclick="switchView('doctors')"><i class="fa-solid fa-user-doctor"></i> Find Doctors</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <i class="fa-solid fa-hospital-user"></i>
+                    <h3 class="stat-number" data-target="24500">0</h3>
+                    <p>Patients Analyzed</p>
+                </div>
+                <div class="stat-card glass">
+                    <i class="fa-solid fa-file-medical"></i>
+                    <h3 class="stat-number" data-target="89200">0</h3>
+                    <p>Reports Processed</p>
+                </div>
+                <div class="stat-card glass">
+                    <i class="fa-solid fa-user-check"></i>
+                    <h3 class="stat-number" data-target="1200">0</h3>
+                    <p>Doctors Connected</p>
+                </div>
+                <div class="stat-card glass">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <h3><span class="stat-number" data-target="98">0</span>%</h3>
+                    <p>Accuracy Rate</p>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <h2>Intelligent System Capabilities</h2>
+                <p>Advanced diagnostic assistant tools aligned with clinical pipelines.</p>
+            </div>
+             <div class="features-grid">
+                <div class="feature-card glass-card" onclick="switchView('scanner')">
+                    <div class="feature-icon"><i class="fa-solid fa-camera-retro"></i></div>
+                    <h3>Disease Image Scanner</h3>
+                    <p>Advanced image analysis designed to support early disease detection.</p>
+                </div>
+                <div class="feature-card glass-card" onclick="switchView('analyzer')">
+                    <div class="feature-icon"><i class="fa-solid fa-file-waveform"></i></div>
+                    <h3>Medical Report Analyzer</h3>
+                    <p>Analyze your lab reports quickly and securely.</p>
+                </div>
+                <div class="feature-card glass-card" onclick="switchView('symptoms')">
+                    <div class="feature-icon"><i class="fa-solid fa-notes-medical"></i></div>
+                    <h3>Symptom Checker</h3>
+                    <p>Get quick insights based on your symptoms.</p>
+                </div>
+                <div class="feature-card glass-card" onclick="switchView('dashboard')">
+                    <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Health Risk Management Dashboard</h3>
+                    <p>Your complete health overview in one place.</p>
+                </div>
+                <div class="feature-card glass-card" onclick="switchView('doctors')">
+                    <div class="feature-icon"><i class="fa-solid fa-user-md"></i></div>
+                    <h3>Doctor Recommendation</h3>
+                    <p>Search and connect with qualified doctors across various medical specialties.</p>
+                </div>
+                <div class="feature-card glass-card" onclick="switchView('appointments')">
+                    <div class="feature-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3>Appointment Booking</h3>
+                    <p>Book appointments with trusted healthcare professionals in just a few clicks.</p>
+                </div>
+            </div>
+
+            <div class="sdg-container glass-card">
+                <div class="sdg-badge">SDG Goal 3</div>
+                <div class="sdg-content">
+                    <h2>Global Health Framework Integration: Good Health & Well-Being</h2>
+                     <p>Aligned with United Nations Sustainable Development Goal 3 (Good Health and Well-being), our platform uses AI to make healthcare more accessible. From symptom analysis and medical report interpretation to disease image detection and specialist recommendations, we help users make informed health decisions while improving access to quality care.</p>
+                    <div class="sdg-icons">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                        <i class="fa-solid fa-globe"></i>
+                        <i class="fa-solid fa-shield-virus"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scanner-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Disease Image Scanner</h2>
+                <p>Advanced image analysis designed to support early disease detection.</p>
+            </div>
+            <div class="split-layout">
+                <div class="input-pane glass-card">
+                    <div class="drop-zone" id="scanner-drop-zone">
+                        <i class="fa-solid fa-cloud-arrow-up drop-zone-icon"></i>
+                        <p>Drag & drop diagnostic images here or <span class="browse-link">browse files</span></p>
+                        <span class="file-formats">Accepts JPG, PNG, JPEG up to 10MB</span>
+                        <input type="file" id="scanner-file-input" accept="image/png, image/jpeg, image/jpg" hidden>
+                    </div>
+                    <div id="scanner-preview-container" class="preview-container hidden">
+                        <h4>Image Selection Loaded:</h4>
+                        <img id="scanner-preview" src="#" alt="Scanner Preview">
+                        <button class="btn btn-danger btn-sm" id="btn-clear-scanner"><i class="fa-solid fa-trash"></i> Remove</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="scanner-notes">Accompanying Physical Symptoms / Timeline</label>
+                        <textarea id="scanner-notes" rows="3" placeholder="Describe your symptoms, when they started, and any changes you've noticed over time."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-run-scanner"><i class="fa-solid fa-wand-magic-sparkles"></i> Execute Visual Analysis</button>
+                </div>
+                
+                <div class="output-pane glass-card" id="scanner-result-pane">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <p>Upload an image and click "Execute Visual Analysis" to receive AI-powered health insights.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card scanner-analysis-section">
+
+    <div class="scanner-ready">
+
+        <div class="scanner-icon">
+            <i class="fa-solid fa-microscope"></i>
+        </div>
+
+        <h2>Ready for Analysis</h2>
+
+        <p class="scanner-text">
+            Upload a medical image and click
+            <strong>"Execute Visual Analysis"</strong>
+            to receive AI-powered diagnosis results with
+            detailed risk assessment.
+        </p>
+
+        <div class="analysis-steps">
+
+            <div class="analysis-step">
+                <div class="step-number">1</div>
+                <span>Upload Image</span>
+            </div>
+
+            <div class="step-line"></div>
+
+            <div class="analysis-step">
+                <div class="step-number">2</div>
+                <span>Add Symptoms</span>
+            </div>
+
+            <div class="step-line"></div>
+
+            <div class="analysis-step">
+                <div class="step-number">3</div>
+                <span>Get Results</span>
+            </div>
+
+        </div>
+
+    </div>
+        </section>
+        
+
+        <section id="analyzer-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Medical Report Analyzer</h2>
+                <p>Analyze your lab reports quickly and securely.</p>
+            </div>
+            <div class="split-layout">
+                <div class="input-pane glass-card">
+                    <div class="drop-zone" id="analyzer-drop-zone">
+                        <i class="fa-solid fa-file-pdf drop-zone-icon"></i>
+                        <p>Drop lab telemetry files or clinical reports here or <span class="browse-link">browse files</span></p>
+                        <span class="file-formats">Supports PDF, PNG, JPG documents</span>
+                        <input type="file" id="analyzer-file-input" accept="image/*,application/pdf" hidden>
+                    </div>
+                    <div id="analyzer-preview-container" class="preview-container hidden">
+                        <div class="doc-placeholder">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span id="analyzer-file-name">document.pdf</span>
+                        </div>
+                        <button class="btn btn-danger btn-sm" id="btn-clear-analyzer"><i class="fa-solid fa-trash"></i> Remove</button>
+                    </div>
+                     <div class="form-group">
+                            <label for="reportType">Report Type</label>
+                            <select id="reportType" name="reportType" required>
+                                <option value="" disabled selected hidden>Select report type...</option>
+                                <option value="blood-test">Blood Test</option>
+                                <option value="mri-scan">MRI Scan</option>
+                                <option value="x-ray">X-Ray</option>
+                                <option value="ct-scan">CT-Scan</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    <div class="form-group">
+                        <label for="analyzer-notes">Medical History</label>
+                        <textarea id="analyzer-notes" rows="3" placeholder="Mention any existing medical conditions, allergies, or medications you're currently taking..."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-run-analyzer"><i class="fa-solid fa-microchip"></i> Analyze Report</button>
+                </div>
+                
+                <div class="output-pane glass-card" id="analyzer-result-pane">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-microscope"></i>
+                        <p>Upload your medical report to compare your results with normal reference ranges and receive personalized insights.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="symptoms-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Symptom Checker System</h2>
+                 <p>Get quick insights based on your symptoms.</p>
+            </div>
+            <div class="split-layout">
+                <div class="input-pane glass-card">
+                    <label class="form-label font-bold">Select Your Symptoms</label>
+                    <label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Skin Rash">
+    <span class="checkmark"></span> Skin Rash
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Itching">
+    <span class="checkmark"></span> Itching
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Ear Pain">
+    <span class="checkmark"></span> Ear Pain
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Sore Throat">
+    <span class="checkmark"></span> Sore Throat
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Hearing Loss">
+    <span class="checkmark"></span> Hearing Loss
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Dizziness">
+    <span class="checkmark"></span> Dizziness
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Memory Loss">
+    <span class="checkmark"></span> Memory Loss
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Joint Pain">
+    <span class="checkmark"></span> Joint Pain
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Bone Pain">
+    <span class="checkmark"></span> Bone Pain
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Stomach Pain">
+    <span class="checkmark"></span> Stomach Pain
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Acidity">
+    <span class="checkmark"></span> Acidity
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Lump">
+    <span class="checkmark"></span> Lump
+</label>
+
+<label class="check-container">
+    <input type="checkbox" name="symptom-check" value="Abnormal Bleeding">
+    <span class="checkmark"></span> Abnormal Bleeding
+</label>
+
+<div class="form-group">
+                        <label for="symptom-duration" class="form-label-bold">Duration of Symptoms</label>
+                        <select id="symptom-duration" class="form-control">
+                            <option value="acute-short">Less than 24 hours</option>
+                            <option value="acute-mid">24 to 72 hours</option>
+                            <option value="sub-acute">1 to 2 weeks</option>
+                            <option value="chronic">More than 2 weeks</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="symptom-description">Additional Description</label>
+                        <textarea id="symptom-description" rows="4" placeholder="Describe any other details about how you are feeling (e.g., pain scale, triggers, family history)..."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-run-symptoms"><i class="fa-solid fa-brain"></i> Compute Probabilities</button>
+                </div>
+                
+                <div class="output-pane glass-card" id="symptoms-result-pane">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <p>Complete the symptom checker to view your AI-powered health analysis and recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="doctors-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Healthcare Professionals</h2>
+                <p>Search and connect with qualified doctors across various medical specialties.</p>
+            </div>
+            <div class="filter-bar glass-card">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="doctor-search" placeholder="Search by physician name or keyword profile...">
+                </div>
+                <div class="filter-dropdowns">
+                    <select id="filter-specialty">
+                        <option value="All">All Specializations</option>
+                        <option value="Cardiologist">Cardiology</option>
+                        <option value="Dermatologist">Dermatology</option>
+                        <option value="Neurologist">Neurology</option>
+                        <option value="Pulmonologist">Pulmonology</option>
+                        <option value="Orthopedic">Orthopedics</option>
+                        <option value="Gastroenterologist">Gastroenterologist</option>
+                        <option value="Oncologist">Oncologist</option>
+                        <option value="Gynecologist">Gynecologist</option>
+                        <option value="ENT Specialist">ENT Specialist</option>
+                    </select>
+                    <select id="filter-rating">
+                        <option value="0">All Ratings</option>
+                        <option value="4.5+">4.5+ Stars</option>
+                        <option value="4.0+">4.0+ Stars</option>
+                        <option value="3.5+">3.5+ Stars</option>
+                        <option value="3.0+">3.0+ Stars</option>
+                    </select>
+                </div>
+            </div>
+            <div class="doctors-grid" id="doctors-directory-grid">
+                </div>
+        </section>
+
+        <section id="appointments-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Book an Appointment</h2>
+                <p>Book appointments with trusted healthcare professionals in just a few clicks.</p>
+            </div>
+            <div class="booking-container glass-card">
+                <form id="appointment-form" onsubmit="handleBooking(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-name">Patient Name</label>
+                            <input type="text" id="book-name" required placeholder="Vikas Kumar">
+                        </div>
+                        <div class="form-group">
+                            <label for="book-email">Email Address</label>
+                            <input type="email" id="book-email" required placeholder="vikaskumar@email.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-phone">Mobile Number</label>
+                            <input type="tel" id="book-phone" required placeholder="+91 xxxxxxxxxx">
+                        </div>
+                        <div class="form-group">
+                            <label for="book-doctor">Select a Specialist</label>
+                            <select id="book-doctor" required>
+                                <!-- Managed dynamically by JS -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-date">Select Appointment Date</label>
+                            <input type="date" id="book-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-time">Preferred Time</label>
+                            <select id="book-time" required>
+                                <option value="09:00 AM">09:00 AM - 10:00 AM</option>
+                                <option value="11:00 AM">11:00 AM - 12:00 PM</option>
+                                <option value="02:00 PM">02:00 PM - 03:00 PM</option>
+                                <option value="04:00 PM">04:00 PM - 05:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-reason">Explicit Statement of Purpose / Symptoms Baseline</label>
+                        <textarea id="book-reason" rows="4" required placeholder="Detail specific symptoms or relevant case history context details..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-file-signature"></i> Finalize Scheduler Token</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="dashboard-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Health Risk Management Dashboard</h2>
+                <p>Your complete health overview in one place.</p>
+            </div>
+            <div class="dashboard-stats">
+                <div class="dash-card glass">
+                    <span class="dash-title">Total AI Analyses</span>
+                    <span class="dash-value" id="dash-total-analyses">1,482</span>
+                    <span class="dash-footer positive"><i class="fa-solid fa-arrow-up"></i> +12% this cycle</span>
+                </div>
+                <div class="dash-card glass">
+                    <span class="dash-title">Reports Uploaded</span>
+                    <span class="dash-value" id="dash-reports-count">843</span>
+                    <span class="dash-footer stable">Clinical OCR engine verified</span>
+                </div>
+                <div class="dash-card glass">
+                    <span class="dash-title">High Risk Flags</span>
+                    <span class="dash-value danger-text" id="dash-high-risk">24</span>
+                    <span class="dash-footer negative"><i class="fa-solid fa-triangle-exclamation"></i> Action required</span>
+                </div>
+                <div class="dash-card glass">
+                    <span class="dash-title">Booked Slots</span>
+                    <span class="dash-value" id="dash-booked">156</span>
+                    <span class="dash-footer positive">Synchronized status active</span>
+                </div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-box glass-card">
+                    <h3>Risk Factor Distribution Target</h3>
+                    <canvas id="chart-risk-dist" width="300" height="300"></canvas>
+                </div>
+                <div class="chart-box glass-card">
+                    <h3>Morbidity Categorization Logs</h3>
+                    <canvas id="chart-categories" width="300" height="300"></canvas>
+                </div>
+                <div class="chart-box glass-card full-width-chart">
+                    <h3>System Processing Throughput Trends</h3>
+                    <canvas id="chart-trends" height="150"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact-view" class="view-hidden fade-in">
+            <div class="section-title">
+                <h2>Connect for Better Care</h2>
+                <p>Have questions or need assistance? Contact our team for support, feedback, or partnership inquiries.</p>
+            </div>
+            <div class="split-layout">
+                <div class="input-pane glass-card">
+                    <h3>Transmission Module</h3>
+                    <form id="contact-form" onsubmit="handleContactSubmit(event)">
+                        <div class="form-group">
+                            <label for="contact-name">Full Name</label>
+                            <input type="text" id="contact-name" required placeholder="Vikas Kumar">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email Address</label>
+                            <input type="email" id="contact-email" required placeholder="vikaskumar@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-msg">Describe Your Concern</label>
+                            <textarea id="contact-msg" rows="5" required placeholder="Share your healthcare-related question or feedback..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
+                    </form>
+                </div>
+                <div class="output-pane glass-card flex-between">
+                    <div class="emergency-panel">
+                        <h3><i class="fa-solid fa-truck-medical icon-pulse text-danger"></i> Clinical Crisis Escalation</h3>
+                        <p>If you have severe chest pain, trouble breathing, or any other medical emergency, call emergency services immediately or visit the nearest hospital. This AI tool is not a substitute for emergency medical care.</p>
+                        <div class="emergency-phone">🚨 Emergency Helpline: 112</div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+
+</div>
+            </div>
+        </section>
+    </main>
+
+    
+        <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+<script type="module">
+	import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+	createChat({
+		webhookUrl: 'https://chirag98728.app.n8n.cloud/webhook/17884a23-2691-4192-89e7-faa138cffd4c/chat'
+	});
+</script>
+<!-- <div id="ai-chatbot" class="chatbot-wrapper closed">
+        <div class="chatbot-header" onclick="toggleChatbot()">
+            <div class="bot-info">
+                <i class="fa-solid fa-robot"></i>
+                <div>
+                    <h4>Clinical AI Node</h4>
+                    <span>Online Engine Diagnostics</span>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-up toggle-chat-icon"></i>
+        </div>
+        <div class="chatbot-body">
+            <div class="chat-logs" id="chat-logs-container">
+                <div class="chat-msg bot">
+                    <p>Greetings. I am the clinical telemetry chatbot. Enter ongoing acute diagnostic markers to receive structural guidance paths.</p>
+                    <span class="chat-time">Just Now</span>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-user-input" placeholder="Type symptoms or systemic issues..." onkeypress="handleChatKey(event)">
+                <button id="btn-chat-send" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div> -->
+
+    <div id="success-modal" class="modal-overlay hidden">
+        <div class="modal-card glass-card">
+            <i class="fa-solid fa-circle-check success-icon"></i>
+            <h2>Appointment Confirmed Successfully</h2>
+            <p>Your processing configuration has locked valid node bandwidth. Print this reference clearance token for clinical identification maps:</p>
+            <div class="token-id" id="modal-token-display">TOKEN-XXXXXXXX</div>
+            <button class="btn btn-primary" onclick="closeModal()">Acknowledge & Clear</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3><i class="fa-solid fa-heart-pulse"></i> AI Health</h3>
+                <p>Decentralized computational screening frameworks optimizing wellness telemetry infrastructure globally under UN SDG-3 directives.</p>
+            </div>
+            <div>
+                <h4>Core Framework Modules</h4>
+                <ul>
+                    <li><a href="#scanner" onclick="switchView('scanner')">Visual Matrix Scan</a></li>
+                    <li><a href="#analyzer" onclick="switchView('analyzer')">OCR Medical Parser</a></li>
+                    <li><a href="#symptoms" onclick="switchView('symptoms')">Symptom Logic Engine</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Support & Policy Nodes</h4>
+                <ul>
+                    <li><a href="#doctors" onclick="switchView('doctors')">Practitioner Directory</a></li>
+                    <li><a href="#contact" onclick="switchView('contact')">Secure Escalation Node</a></li>
+                    <li><a href="#">HIPAA Compliance Logs</a></li>
+                </ul>
+            </div>
+            <div class="footer-socials">
+                <h4>System Nodes</h4>
+                <div class="social-row">
+                    <a href="#" aria-label="System Node Github Link"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" aria-label="Medical Research Twitter Link"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" aria-label="Linkedin Networking Link"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 AI Health Risk Matrix System. Engineered to meet strict digital accessibility standards.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
