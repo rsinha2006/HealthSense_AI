@@ -1,0 +1,118 @@
+{
+  "name": "AI chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c46a7a79-06dc-431f-b0d5-c849253102cb",
+      "name": "When chat message received",
+      "webhookId": "17884a23-2691-4192-89e7-faa138cffd4c"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are HealthGuard AI Assistant, the virtual guide for the AI Health Risk Assessment & Smart Doctor Recommendation System.\n\nYour job is to help users navigate and use the website.\n\nYou can:\n- Explain website features\n- Guide users to upload disease images\n- Guide users to upload medical reports\n- Help users use the symptom checker\n- Explain risk levels (Low, Medium, High)\n- Explain specialist types and their roles\n- Help users book appointments\n- Answer general health and wellness questions\n\nFor detailed disease analysis, report analysis, image analysis, risk prediction, or doctor recommendations, politely direct users to use the appropriate website tools.\n\nExample:\nUser: I have a skin rash. What should I do?\n\nResponse:\nYou can use our Disease Image Scanner by uploading a clear image of the affected area. The system will analyze the image, estimate the risk level, and recommend the most suitable specialist.\n\nKeep responses:\n- Friendly\n- Professional\n- Short and clear\n- Easy to understand\n\nDo not provide medical diagnoses or prescribe medications.\n\nAlways remind users:\n\"For detailed analysis, please use the website's AI analysis tools.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "387f2125-3835-454f-8fb7-df9bb93a18b8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        208
+      ],
+      "id": "b212cc2c-7787-46d3-96da-cba663803165",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fxNE3TwhtyPrq9Zh",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        256
+      ],
+      "id": "5fbdfd4a-fa23-4bf5-865a-cc3d8bb21ee9",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9a3ebe77-aef3-4590-b497-d05acb5aac1b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "defb3b682ac92026c84819ec5da6592996de9cbe5ecdaeb99e83e8aefa9e4e96"
+  },
+  "nodeGroups": [],
+  "id": "D091mnRpPtldwjij",
+  "tags": []
+}
