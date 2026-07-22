@@ -19,5 +19,4 @@ The application analyzes user-selected symptoms, predicts possible health condit
 
 This project provides an educational demonstration of symptom-based health assessment.
 
-
-Feel free to use and modify it for learning purposes.
+https://health-sense-ai-eight.vercel.app/
